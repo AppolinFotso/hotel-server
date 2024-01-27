@@ -76,7 +76,7 @@ router.get("/create", (req, res) => {
       const bookings = await pool.query(
         "CREATE TABLE bookings (id INT PRIMARY KEY, title TEXT  NOT NULL,firstname TEXT  NOT NULL,username TEXT  NOT NULL, email TEXT UNIQUE NOT NULL, room_id INT NOT NULL, check_in_date DATE NOT NULL, check_out_date DATE NOT NULL)"
       );
-      res.json(bookings.rows);
+      res.json({ creation: "completed" });
     } catch (err) {
       console.log(err);
     }
