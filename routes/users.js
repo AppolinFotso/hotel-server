@@ -1,17 +1,22 @@
 var express = require("express");
 const { Pool } = require("pg");
+//const fs = require("fs")
 const dotenv = require("dotenv");
 dotenv.config();
 var router = express.Router();
-
+//const caCert = fs.readFileSync("../eu-west-2-bundle.pem"); 
 // database connection
 const pool = new Pool({
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
-  port: process.env.PGPORT,
-  ssl: true,
+  port:process.env.PGPORT,
+  ssl: {
+	  rejectUnauthorized: false,
+	 
+  }
+
 });
 //
 //data
@@ -70,19 +75,7 @@ const booking = [
 ];
 
 //
-router.get("/create", (req, res) => {
-  const storeBookings = async () => {
-    try {
-      const bookings = await pool.query(
-        "CREATE TABLE bookings (id INT PRIMARY KEY, title TEXT  NOT NULL,firstname TEXT  NOT NULL,username TEXT  NOT NULL, email TEXT UNIQUE NOT NULL, room_id INT NOT NULL, check_in_date DATE NOT NULL, check_out_date DATE NOT NULL)"
-      );
-      res.json({ creation: "completed" });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  storeBookings();
-});
+
 //
 router.get("/", (req, res) => {
   const storeBookings = async () => {

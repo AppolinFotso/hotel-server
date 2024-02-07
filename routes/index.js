@@ -16,9 +16,12 @@ const pool = new Pool({
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   port: process.env.PGPORT,
-  ssl: true,
+  ssl: {
+	  rejectUnauthorized: false,  
+  }
 });
 //
+
 
 // GET "/"
 router.get("/", (req, res) => {
