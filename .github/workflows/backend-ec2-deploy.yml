@@ -20,7 +20,6 @@ jobs:
 
   deploy:
     needs: build
-    name: Deploy Docker container to EC2
     runs-on: [aws-ec2]
     steps:
       - name: pull Docker image
