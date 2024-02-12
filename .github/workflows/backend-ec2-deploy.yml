@@ -6,14 +6,24 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout update
+        uses: actions/checkout@3
+      - name: Login to Docker Hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: build docker image
+        run: docker build -t appolinsf/hotel-image .
+      - name: push docker image to Docker Hub
+        run: docker push appolinsf/hotel-image:latest
+
   deploy:
+    needs: build
     name: Deploy to EC2 on main branch push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the files
-        uses: actions/checkout@v2
-
       - name: Deploy to server 1
         uses: easingthemes/ssh-deploy@main
         env:
@@ -21,3 +31,9 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
+      - name: pull Docker image
+        run: docker pull appolinsf/hotel-image:latest
+      - name: delete old container
+        run: docker rm -f hotel-container
+      - name: Create Docker container
+        run: docker run -d -p 3000:3000 --name hotel-container appolinsf/hotel-image:latest
